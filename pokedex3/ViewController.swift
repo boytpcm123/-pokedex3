@@ -165,7 +165,7 @@ class ViewController: UIViewController, UICollectionViewDelegate,
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        print("thong ne")
+        
         if segue.identifier == "PokemonDetailVC" {
             if let detailsVC = segue.destination as? PokemonDetailVC {
                 if let poke = sender as? Pokemon {
