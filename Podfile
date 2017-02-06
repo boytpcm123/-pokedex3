@@ -7,4 +7,6 @@ target 'pokedex3' do
 
   # Pods for pokedex3
 
+  pod 'Alamofire', '~> 4.3'
+
 end
