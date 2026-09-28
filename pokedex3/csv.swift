@@ -7,7 +7,10 @@ import Foundation
 open class CSV {
     open var headers: [String] = []
     open var rows: [Dictionary<String, String>] = []
-    open var columns = Dictionary<String, [String]>()
+    // ⚡ Optimization: Lazy evaluation of columns dictionary.
+    // Computing columns eager-parses every row for every header (O(N*H) dictionary lookups).
+    // Making it lazy avoids thousands of redundant allocations at startup when columns is not accessed.
+    open lazy var columns: Dictionary<String, [String]> = self.parseColumns()
     var delimiter = CharacterSet(charactersIn: ",")
     
     public init(content: String?, delimiter: CharacterSet, encoding: UInt) throws{
@@ -20,7 +23,6 @@ open class CSV {
             
             self.headers = self.parseHeaders(fromLines: lines)
             self.rows = self.parseRows(fromLines: lines)
-            self.columns = self.parseColumns(fromLines: lines)
         }
     }
     
@@ -63,7 +65,7 @@ open class CSV {
         return rows
     }
     
-    func parseColumns(fromLines lines: [String]) -> Dictionary<String, [String]> {
+    func parseColumns() -> Dictionary<String, [String]> {
         var columns = Dictionary<String, [String]>()
         
         for header in self.headers {
