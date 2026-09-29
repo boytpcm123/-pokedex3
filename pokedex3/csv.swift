@@ -43,16 +43,21 @@ open class CSV {
     }
     
     func parseRows(fromLines lines: [String]) -> [Dictionary<String, String>] {
+        guard lines.count > 1 else { return [] }
+
+        // ⚡ Optimization: Pre-allocate capacity for rows and row dictionaries,
+        // and iterate with dropFirst() and index loops to avoid repeated allocations
+        // and header enumeration overhead for every line during app startup.
         var rows: [Dictionary<String, String>] = []
+        rows.reserveCapacity(lines.count - 1)
         
-        for (lineNumber, line) in lines.enumerated() {
-            if lineNumber == 0 {
-                continue
-            }
-            
-            var row = Dictionary<String, String>()
+        let headerCount = self.headers.count
+
+        for line in lines.dropFirst() {
+            var row = Dictionary<String, String>(minimumCapacity: headerCount)
             let values = line.components(separatedBy: self.delimiter)
-            for (index, header) in self.headers.enumerated() {
+            for index in 0..<headerCount {
+                let header = self.headers[index]
                 if index < values.count {
                     row[header] = values[index]
                 } else {
