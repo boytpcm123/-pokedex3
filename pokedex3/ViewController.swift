@@ -59,6 +59,10 @@ class ViewController: UIViewController, UICollectionViewDelegate,
            let csv = try CSV(contentsOfURL: path)
            let rows = csv.rows
            
+            // ⚡ Optimization: Pre-allocate capacity for pokemonData array to avoid
+            // repeated memory allocations and array copies during CSV parsing at app launch.
+            pokemonData.reserveCapacity(rows.count)
+
             for row in rows {
                 let pokeId = Int(row["id"]!)!
                 let name = row["identifier"]!
